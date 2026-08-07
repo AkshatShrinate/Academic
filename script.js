@@ -782,6 +782,96 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
+
+  const getSingleSetHeight = (colId) => {
+    const col = document.getElementById(colId);
+    return col.scrollHeight / 3;
+  };
+
+
+
+
+  const set1Height = getSingleSetHeight('col1');
+  const set2Height = getSingleSetHeight('col2');
+ 
+  gsap.set("#col1, #col3", { y: -set1Height });
+  gsap.set("#col2", { y: -set2Height * 1.5 });
+
+
+
+
+  const wrapper = document.querySelector(".parallax-wrapper");
+
+
+
+
+  let masterTl = gsap.timeline({
+    scrollTrigger: {
+      trigger: ".scroll-container",
+      pin: true,
+      scrub: 1.2,
+      start: "top top",
+      end: "+=7000",
+      invalidateOnRefresh: true
+    }
+  });
+
+
+
+
+  masterTl.to(wrapper, {
+    x: () => -(wrapper.scrollWidth - window.innerWidth),
+    ease: "none"
+  }, 0);
+
+
+
+
+  masterTl.to(".nav-container", {
+    opacity: 0,
+    y: -45,
+    pointerEvents: "none",
+    duration: 0.05,
+    ease: "power2.out"
+  }, 0);
+
+
+
+
+  masterTl.to("#col1, #col3", {
+    y: () => -(set1Height * 2),
+    ease: "none"
+  }, 0);
+
+
+
+
+  masterTl.to("#col2", {
+    y: () => -set2Height * 0.5,
+    ease: "none"
+  }, 0);
+
+
+
+
+  masterTl.to(".white-card-cover", {
+    y: "0%",
+    ease: "power2.out"
+  }, 0.75);
+
+
+
+
+  masterTl.to(".nav-container", {
+    opacity: 1,
+    y: 0,
+    pointerEvents: "auto",
+    duration: 0.1,
+    ease: "power2.out"
+  }, 0.77);
+
+
+
   /* ==========================================
      LIGHTBOX / DIALOG CAROUSEL DATA PIPELINE
      ========================================== */
