@@ -1,21 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Me - Akshat Shrinate</title>
     <!-- Elegant fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..700;1,400..700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..700;1,400..700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
         /* ==========================================================================
-           1. RESET & BASE (Essential for consistent mobile)
+           1. RESET & BASE
            ========================================================================== */
         * {
-            box-sizing: border-box; /* Crucial for padding calculation */
+            box-sizing: border-box;
         }
 
         body {
@@ -24,19 +23,18 @@
             padding: 0;
             min-height: 100vh;
             background-attachment: fixed;
-            /* Default desktop split background */
             background: linear-gradient(to right, #669bbc 33%, #fdf0d5 33%);
-            overflow-x: hidden; /* Prevent unexpected horizontal scroll */
+            overflow-x: hidden;
         }
 
         img {
             max-width: 100%;
-            height: auto;
+            height: 0%;
             display: block;
         }
 
         /* ==========================================================================
-           2. ORIGINAL DESKTOP STYLES (With Sticky Image Update)
+           2. DESKTOP STYLES
            ========================================================================== */
         .main-container {
             display: flex;
@@ -45,10 +43,9 @@
             background: transparent;
             margin: 0;
             padding: 0;
-            align-items: flex-start; /* Ensures sticky behavior functions correctly */
+            align-items: flex-start;
         }
 
-        /* Left Panel Styles - Updated to be sticky on desktop */
         .left-panel {
             background: transparent;
             width: 33%;
@@ -59,23 +56,43 @@
             align-items: center;
             position: sticky;
             top: 0;
-            height: 100vh; /* Fills viewport height to center item vertically */
-            justify-content: center; /* Centers the image perfectly in the sidebar */
+            height: 100vh;
+            justify-content: center;
+        }
+
+        /* Image Crossfade Container */
+        .image-container {
+            position: relative;
+            top:40px;
+            width: 100%;
+            max-width: 425px;
+            aspect-ratio: 4 / 5;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
         }
 
         .image-container img {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            max-width: 600px;
-            border-radius: 8px;
+            height: 100%;
             object-fit: cover;
+            border-radius: 8px;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
         }
 
-        /* Right Panel Styles */
+        .image-container img.active {
+            opacity: 1;
+        }
+
         .right-panel {
             background: transparent;
             width: 67%;
             flex-grow: 1;
-            padding: 40px 60px; /* Increased side padding for desktop */
+            padding: 40px 60px;
         }
 
         .meta-nav {
@@ -83,7 +100,7 @@
             gap: 15px;
             margin-top: 80px;
             margin-bottom: 1rem;
-            justify-content: flex-end; /* Desktop alignment */
+            justify-content: flex-end;
         }
 
         .meta-nav span {
@@ -140,9 +157,162 @@
             margin-bottom: 1.2rem;
         }
 
-        /* Skills Showcase Layout */
+        /* ==========================================================================
+           3. TIMELINE SECTION (Left-Aligned Axis + Scroll Reveal)
+           ========================================================================== */
+        #experience-timeline {
+            padding-top: 50px;
+            margin-top: 40px;
+            border-top: 1px solid rgba(102, 155, 188, 0.2);
+            position: relative;
+        }
+
+        .timeline-container {
+            position: relative;
+            max-width: 1000px;
+            margin: 40px 0 20px 0;
+            padding: 10px 0;
+        }
+
+        /* Left-aligned Vertical Line Background */
+        .timeline-line-bg {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            bottom: 30px;
+            width: 4px;
+            background: rgba(102, 155, 188, 0.25);
+            border-radius: 2px;
+        }
+
+        /* Left-aligned Animated Progress Line */
+        .timeline-line-progress {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            width: 4px;
+            height: 0%;
+            background: #003049;
+            border-radius: 2px;
+            transition: height 0.1s linear;
+        }
+
+        /* Timeline Item Structure */
+        .timeline-item {
+            position: relative;
+            margin-bottom: 50px;
+            width: 100%;
+            display: flex;
+            justify-content: flex-start;
+            padding-left: 55px;
+            
+            /* Hidden State for Reveal Effect */
+            opacity: 0;
+            transform: translateY(40px) scale(0.97);
+            transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), 
+                        transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Visible State triggered by JavaScript Observer */
+        .timeline-item.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        /* Left Node Dot */
+        .timeline-node {
+            position: absolute;
+            left: 12px;
+            top: 24px;
+            width: 20px;
+            height: 20px;
+            background: #fdf0d5;
+            border: 4px solid #669bbc;
+            border-radius: 50%;
+            z-index: 2;
+            transition: background-color 0.4s ease, border-color 0.4s ease, transform 0.4s ease;
+        }
+
+        .timeline-item.visible .timeline-node {
+            background: #003049;
+            border-color: #669bbc;
+            transform: scale(1.2);
+        }
+
+        /* Event Card - Aligned to the Right Side of Line */
+        .timeline-card {
+            width: 100%;
+            max-width: 650px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            border-radius: 12px;
+            border: 1px solid rgba(102, 155, 188, 0.25);
+            box-shadow: 0 10px 25px rgba(0, 48, 73, 0.06);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .timeline-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 48, 73, 0.12);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-bottom: 1px solid rgba(102, 155, 188, 0.15);
+        }
+
+        .card-body {
+            padding: 24px;
+        }
+
+        .card-tag {
+            display: inline-block;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+            color: #669bbc;
+            margin-bottom: 6px;
+        }
+
+        .card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: #003049;
+            margin: 0 0 4px 0;
+            font-weight: 700;
+        }
+
+        .card-institute {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #003049;
+            opacity: 0.85;
+            margin-bottom: 8px;
+        }
+
+        .card-duration {
+            font-size: 0.8rem;
+            color: #555;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .card-description {
+            font-size: 0.92rem;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* ==========================================================================
+           4. SKILLS SHOWCASE LAYOUT
+           ========================================================================== */
         #skills-showcase {
-            padding-top: 60px;
+            padding-top: 50px;
             margin-top: 40px;
             border-top: 1px solid rgba(102, 155, 188, 0.2);
         }
@@ -168,11 +338,10 @@
             text-align: center;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             cursor: pointer;
-            -webkit-tap-highlight-color: transparent; /* Prevents default mobile grey tap block */
+            -webkit-tap-highlight-color: transparent;
             transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
         }
         
-        /* Desktop Hover Styles (Only activates on larger screens without locking up) */
         @media (min-width: 769px) {
             .skill-card:hover {
                 transform: translateY(-3px);
@@ -191,11 +360,15 @@
             margin: 0 auto 10px auto;
             background: #eee;
             border-radius: 8px;
-            display: flex; align-items: center; justify-content: center;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
         }
 
         .skill-icon-placeholder img {
-            width: 100%; height: 100%; object-fit: contain;
+            width: 100%; 
+            height: 100%; 
+            object-fit: contain;
         }
 
         .skill-name {
@@ -207,7 +380,6 @@
             transition: color 0.2s ease;
         }
 
-        /* Explicit selected class handles clicks on both PC and mobile */
         .skill-card.selected {
             background: rgba(102, 155, 188, 0.95) !important;
             box-shadow: 0 6px 16px rgba(102, 155, 188, 0.4) !important;
@@ -219,8 +391,8 @@
         }
 
         /* ==========================================================================
-           3. MOBILE & TABLET FIXES
-           ========================================================================= */
+           5. MOBILE & TABLET FIXES
+           ========================================================================== */
         @media (max-width: 768px) {
             body {
                 background: #fdf0d5 !important;
@@ -237,7 +409,6 @@
                 height: auto !important;
             }
 
-            /* LEFT PANEL (Banner on Mobile) */
             .left-panel {
                 width: 100% !important;
                 height: auto !important; 
@@ -252,16 +423,19 @@
                 box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             }
 
-            .image-container img {
+            .image-container {
                 max-width: 180px !important;
                 height: 180px !important;
+                aspect-ratio: 1 / 1 !important;
                 border-radius: 50% !important;
                 border: 6px solid #fdf0d5 !important;
                 box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25) !important;
-                object-fit: cover;
             }
 
-            /* RIGHT PANEL (Content) */
+            .image-container img {
+                border-radius: 50% !important;
+            }
+
             .right-panel {
                 width: 100% !important;
                 padding: 40px 24px 80px 24px !important;
@@ -323,6 +497,18 @@
                 color: #222 !important;
             }
 
+            .timeline-item {
+                padding-left: 45px;
+            }
+
+            .timeline-line-bg, .timeline-line-progress {
+                left: 15px !important;
+            }
+
+            .timeline-node {
+                left: 7px !important;
+            }
+
             #skills-showcase {
                 padding-top: 40px !important;
                 margin-top: 30px !important;
@@ -364,18 +550,23 @@
 
     <div class="main-container">
         
-        <!-- LEFT PANEL (Stays dynamically fixed in center on desktop) -->
+        <!-- LEFT PANEL -->
         <div class="left-panel">
             <div class="image-container">
-                <img src="assets/img5.png" alt="Profile Picture of Akshat Shrinate">
+                <img id="img-default" src="assets/profile.jpg" alt="Profile Picture of Akshat Shrinate" class="active">
+                <img id="img-pec" src="assets/bird_lab.jpg" alt="Punjab Engineering College" onerror="this.src='https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=600&q=80'">
+                <img id="img-robotics" src="assets/pec.jpeg" alt="Robotics & Embedded Systems" onerror="this.src='https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=600&q=80'">
+                <img id="img-copperpod" src="assets/intern.jpg" alt="Copperpod IP" onerror="this.src='https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=600&q=80'">
+                <img id="img-iitj" src="assets/img5.png" alt="IIT Jodhpur BIRD Lab" onerror="this.src='https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80'">
+                <img id="img-locomotion" src="assets/school.jpg" alt="Bipedal Locomotion & AI" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80'">
             </div>
         </div>
 
-        <!-- RIGHT PANEL (Scrollable Content) -->
+        <!-- RIGHT PANEL -->
         <div class="right-panel">
             
             <!-- SECTION 1: Personal Details Summary -->
-            <section id="about-intro" class="content-section" style="padding-top: 0;">
+            <section id="about-intro" class="content-section" style="padding-top: 0;" data-img="img-default">
                 
                 <div class="meta-nav">
                     <span>Developer</span>
@@ -407,8 +598,97 @@
 
             </section>
 
-            <!-- SECTION 2: Skills Grid -->
-            <section id="skills-showcase" class="content-section">
+            <!-- SECTION 2: Experience & Education Timeline -->
+            <section id="experience-timeline" class="content-section">
+                <h2 class="section-title">Education & Experience</h2>
+
+                <div class="timeline-container" id="timeline-container">
+                    <div class="timeline-line-bg"></div>
+                    <div class="timeline-line-progress" id="timeline-progress"></div>
+                      <!-- Stop 5: Locomotion & Future Master's Research -->
+                    <div class="timeline-item" data-img="img-locomotion">
+                        <div class="timeline-node"></div>
+                        <div class="timeline-card">
+                            <img src="assets/lfs_image.jpg" alt="Class X, Little Flower School" class="card-image" >
+                            <div class="card-body">
+                                <span class="card-tag">Education</span>
+                                <h3 class="card-title">Little Flower School</h3>
+                                <div class="card-institute">Class X, ICSE</div>
+                                <div class="card-duration">2006-2019</div>
+                                <p class="card-description">Completed my secondary education with a focus on science and mathematics. Invested significant time in developing a strong foundation in these subjects.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stop 1: PEC Education -->
+                    <div class="timeline-item" data-img="img-pec">
+                        <div class="timeline-node"></div>
+                        <div class="timeline-card">
+                            <img src="assets/ags_image.jpg" alt="Punjab Engineering College" class="card-image" >
+                            <div class="card-body">
+                                <span class="card-tag">Education</span>
+                                <h3 class="card-title">Academic Global School</h3>
+                                <div class="card-institute">Class XII, CBSE</div>
+                                <div class="card-duration">2019-2021</div>
+                                <p class="card-description">Pursued higher secondary education with a focus on science and mathematics. Developed a strong understanding of advanced concepts in these fields.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stop 2: Robotics Lead & Hardware Projects -->
+                    <div class="timeline-item" data-img="img-robotics">
+                        <div class="timeline-node"></div>
+                        <div class="timeline-card">
+                            <img src="assets/pec_image.jpg" alt="Robotics & Embedded Systems" class="card-image" >
+                            <div class="card-body">
+                                <span class="card-tag">Education</span>
+                                <h3 class="card-title">Punjab Engineering College, Chandigarh</h3>
+                                <div class="card-institute">B.Tech in Electronics & Communication Engineering</div>
+                                <div class="card-duration">2021-2025</div>
+                                <p class="card-description">Pursued undergraduate education in Electronics & Communication Engineering with a focus on embedded systems and Robotics.</p>
+                                 <p class="card-description"> Minor Specialization in VLSI Design.</p> 
+                                 <p class="card-description"> CGPA: 7.35/10</p> 
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stop 3: Copperpod IP -->
+                    <div class="timeline-item" data-img="img-copperpod">
+                        <div class="timeline-node"></div>
+                        <div class="timeline-card">
+                            <img src="assets/copperpod_image.jpg" alt="Copperpod IP" class="card-image" >
+                            <div class="card-body">
+                                <span class="card-tag">Work Experience</span>
+                                <h3 class="card-title">Research Analyst Intern</h3>
+                                <div class="card-institute">Copperpod IP</div>
+                                <div class="card-duration">Industry Internship, January 2024 - July 2024</div>
+                                <p class="card-description">Analyzed cutting-edge global technology patents, reverse-engineering complex hardware/software architectures and technological frameworks to provide technical insights to clients regarding infringement lawsuits.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stop 4: IIT Jodhpur BIRD Lab -->
+                    <div class="timeline-item" data-img="img-iitj">
+                        <div class="timeline-node"></div>
+                        <div class="timeline-card">
+                            <img src="assets/iit_j.png" alt="IIT Jodhpur BIRD Lab" class="card-image" >
+                            <div class="card-body">
+                                <span class="card-tag">Research Experience</span>
+                                <h3 class="card-title">Project Assistant</h3>
+                                <div class="card-institute">Next-Gen BIRD Lab, Indian Institute of Technology Jodhpur</div>
+                                <div class="card-duration">September 2025 - June 2026</div>
+                                <p class="card-description">Developing real-time embedded control software, Neural Network pipelines, and hardware integration for mobile quadrupeds and bio-inspired robotics.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                  
+
+                </div>
+            </section>
+
+            <!-- SECTION 3: Skills Grid -->
+            <section id="skills-showcase" class="content-section" data-img="img-default">
                 <h2 class="section-title">Skills & Software</h2>
                 
                 <div class="skills-grid">
@@ -455,29 +735,103 @@
         </div>
     </div>
 
-    <!-- Script that forces only ONE active element at any time across mobile and PC -->
+    <!-- Interactive Scripts -->
     <script>
+        /* -------------------------------------------------------------------------
+           1. SKILL CARD TOGGLE SCRIPT
+           ------------------------------------------------------------------------- */
         document.querySelectorAll('.skill-card').forEach(card => {
             card.addEventListener('click', function(e) {
-                // Prevent the document click listener from immediately wiping our toggle action
                 e.stopPropagation(); 
-                
                 const isAlreadySelected = this.classList.contains('selected');
-                
-                // Remove highlight from ALL cards instantly
                 document.querySelectorAll('.skill-card').forEach(c => c.classList.remove('selected'));
-                
-                // Toggle active state only on the item clicked
                 if (!isAlreadySelected) {
                     this.classList.add('selected');
                 }
             });
         });
 
-        // Tapping or clicking anywhere outside the panels safely strips active elements back to default white
         document.addEventListener('click', function() {
             document.querySelectorAll('.skill-card').forEach(c => c.classList.remove('selected'));
         });
+
+        /* -------------------------------------------------------------------------
+           2. DYNAMIC INTERSECTION OBSERVER (Scroll Reveals & Left Panel Image Switcher)
+           ------------------------------------------------------------------------- */
+        const timelineItems = document.querySelectorAll('.timeline-item');
+        const progressLine = document.getElementById('timeline-progress');
+        const container = document.getElementById('timeline-container');
+        const leftImages = document.querySelectorAll('.image-container img');
+
+        function switchLeftImage(targetId) {
+            leftImages.forEach(img => {
+                if (img.id === targetId) {
+                    img.classList.add('active');
+                } else {
+                    img.classList.remove('active');
+                }
+            });
+        }
+
+        // Observer for reveal effect and left image crossfade
+        const observerOptions = {
+            threshold: 0.35,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const sectionsAndItems = document.querySelectorAll('#about-intro, .timeline-item, #skills-showcase');
+
+        const imageObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Reveal timeline items
+                    if (entry.target.classList.contains('timeline-item')) {
+                        entry.target.classList.add('visible');
+                    }
+                    
+                    // Switch image based on active section/item
+                    const imgId = entry.target.getAttribute('data-img');
+                    if (imgId) {
+                        switchLeftImage(imgId);
+                    }
+                }
+            });
+        }, observerOptions);
+
+        sectionsAndItems.forEach(element => imageObserver.observe(element));
+
+        /* -------------------------------------------------------------------------
+           3. TIMELINE LINE PROGRESS ANIMATION
+           ------------------------------------------------------------------------- */
+        window.addEventListener('scroll', updateTimelineProgress);
+        window.addEventListener('resize', updateTimelineProgress);
+
+        function updateTimelineProgress() {
+            if (!container || timelineItems.length === 0) return;
+
+            const firstNode = timelineItems[0].querySelector('.timeline-node');
+            const lastNode = timelineItems[timelineItems.length - 1].querySelector('.timeline-node');
+
+            const containerRect = container.getBoundingClientRect();
+            const firstNodeRect = firstNode.getBoundingClientRect();
+            const lastNodeRect = lastNode.getBoundingClientRect();
+
+            const startY = firstNodeRect.top - containerRect.top + 10;
+            const endY = lastNodeRect.top - containerRect.top + 10;
+            const totalLineHeight = endY - startY;
+
+            const triggerPoint = window.innerHeight * 0.7;
+            const currentScrollDistance = triggerPoint - firstNodeRect.top;
+
+            let progress = (currentScrollDistance / totalLineHeight) * 100;
+            progress = Math.max(0, Math.min(100, progress));
+
+            progressLine.style.top = startY + 'px';
+            progressLine.style.height = (progress * (totalLineHeight / 100)) + 'px';
+        }
+
+        // Initialize progress line on page load
+        updateTimelineProgress();
     </script>
 </body>
 </html>
