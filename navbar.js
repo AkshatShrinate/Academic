@@ -247,7 +247,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <i class="fa-solid fa-xmark"></i>
       </button>
       <div class="mobile-drawer-links">
-        <a href="main.html" class="${currentPath === 'main.html' || currentPath === '' ? 'active' : ''}"><span>Home</span></a>
+        <a href="index.html" class="${currentPath === 'index.html' || currentPath === '' ? 'active' : ''}"><span>Home</span></a>
         <a href="about.html" class="${currentPath === 'about.html' ? 'active' : ''}"><span>About</span></a>
         <a href="projects.html" class="${currentPath === 'projects.html' ? 'active' : ''}"><span>Projects</span></a>
         <a href="media.html" class="${currentPath === 'media.html' ? 'active' : ''}"><span>Media</span></a>
